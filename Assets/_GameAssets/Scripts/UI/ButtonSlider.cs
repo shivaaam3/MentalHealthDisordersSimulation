@@ -28,6 +28,7 @@ public class ButtonSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     private void InitSlider() {
         if (isSliderInit) return;
+        isSliderInit = true;
         slider.minValue = minValue;
         slider.maxValue = maxValue;
     }
