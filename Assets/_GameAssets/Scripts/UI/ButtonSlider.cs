@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEditor;
 
 public class ButtonSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private Button plus;
@@ -17,10 +18,16 @@ public class ButtonSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
 
     public Action<float> OnValueChanged;
+    private bool isSliderInit = false;
 
-
-    // Start is called before the first frame update
+    //Start is called before the first frame update
     private void Start() {
+        
+    }
+
+
+    private void InitSlider() {
+        if (isSliderInit) return;
         slider.minValue = minValue;
         slider.maxValue = maxValue;
     }
@@ -46,9 +53,10 @@ public class ButtonSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     }
 
     public void ApplyNewData(float sliderVal) {
+        InitSlider();
         slider.value = sliderVal;
-        sliderValueText.text = slider.value.ToString();
-        OnValueChanged?.Invoke(slider.value);
+        sliderValueText.text = sliderVal.ToString();
+        OnValueChanged?.Invoke(sliderVal);
     }
 
     public void OnPointerEnter(PointerEventData eventData) {

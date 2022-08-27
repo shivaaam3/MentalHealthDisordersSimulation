@@ -80,18 +80,18 @@ public class SettingsManager : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        //PlayerPrefsManager.ClearData();
         InitSettings();
-
     }
 
 
 
 
     void InitSettings() {
+        //PlayerPrefsManager.ClearData();
         //PlayerPrefsManager.DebugPrefs();
-        movementToggle.SwitchToggle(PlayerPrefsManager.MoveToggleState);
-        turnToggle.SwitchToggle(PlayerPrefsManager.TurnToggleState);
+
+        movementToggle.SwitchToggleTo(PlayerPrefsManager.MoveToggleState);
+        turnToggle.SwitchToggleTo(PlayerPrefsManager.TurnToggleState);
         snapAngleSlider.ApplyNewData(PlayerPrefsManager.SnapTurnAmount);
         turnSpeedSlider.ApplyNewData(PlayerPrefsManager.TurnSpeed);
         movementSpeedSlider.ApplyNewData(PlayerPrefsManager.MoveSpeed);
