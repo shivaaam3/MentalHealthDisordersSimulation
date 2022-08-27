@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class ButtonSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private Button plus;
     [SerializeField] private Button minus;
-    [SerializeField] public Slider slider;
+    [SerializeField] private Slider slider;
     [SerializeField] private float minValue;
     [SerializeField] private float maxValue;
     [SerializeField] private float incrementValue;

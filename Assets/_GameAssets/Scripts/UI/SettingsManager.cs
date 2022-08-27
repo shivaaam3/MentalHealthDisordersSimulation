@@ -42,14 +42,20 @@ public class SettingsManager : MonoBehaviour {
 
         continuousTurnProvider.enabled = toggleSide == ToggleSide.Right;
         turnSpeedSlider.transform.parent.gameObject.SetActive(toggleSide == ToggleSide.Right);
+
+        PlayerPrefsManager.TurnToggleState = toggleSide;
     }
+
 
     //Left : TELEPORT
     //Right : CONTINUOUS
     private void OnMovementToggleValueChanged(ToggleSide toggleSide) {
+        teleportationProvider.enabled = toggleSide == ToggleSide.Left;
+
         continuousMoveProvider.enabled = toggleSide == ToggleSide.Right;
         movementSpeedSlider.transform.parent.gameObject.SetActive(toggleSide == ToggleSide.Right);
-        teleportationProvider.enabled = toggleSide == ToggleSide.Left;
+
+        PlayerPrefsManager.MoveToggleState = toggleSide;
     }
 
     void OnSnapAngleValueChanged(float value) {
@@ -68,35 +74,26 @@ public class SettingsManager : MonoBehaviour {
     }
 
 
+    public void Exit() {
+        Application.Quit();
+    }
+
     // Start is called before the first frame update
     void Start() {
         //PlayerPrefsManager.ClearData();
         InitSettings();
+
     }
 
+
+
+
     void InitSettings() {
-
-        continuousMoveProvider.enabled = PlayerPrefsManager.MoveToggleState == ToggleSide.Right;
-        movementSpeedSlider.transform.parent.gameObject.SetActive(PlayerPrefsManager.MoveToggleState == ToggleSide.Right);
-        teleportationProvider.enabled = PlayerPrefsManager.MoveToggleState == ToggleSide.Left;
-
-        movementToggle.currentSide = PlayerPrefsManager.MoveToggleState;
-
-        snapTurnProvider.enabled = PlayerPrefsManager.TurnToggleState == ToggleSide.Left;
-        continuousTurnProvider.enabled = PlayerPrefsManager.TurnToggleState == ToggleSide.Right;
-
-        snapAngleSlider.transform.parent.gameObject.SetActive(PlayerPrefsManager.TurnToggleState == ToggleSide.Left);
-        turnSpeedSlider.transform.parent.gameObject.SetActive(PlayerPrefsManager.TurnToggleState == ToggleSide.Right);
-
-        turnToggle.currentSide = PlayerPrefsManager.TurnToggleState;
-
-        snapTurnProvider.turnAmount = PlayerPrefsManager.SnapTurnAmount;
+        //PlayerPrefsManager.DebugPrefs();
+        movementToggle.SwitchToggle(PlayerPrefsManager.MoveToggleState);
+        turnToggle.SwitchToggle(PlayerPrefsManager.TurnToggleState);
         snapAngleSlider.ApplyNewData(PlayerPrefsManager.SnapTurnAmount);
-
-        continuousTurnProvider.turnSpeed = PlayerPrefsManager.TurnSpeed;
         turnSpeedSlider.ApplyNewData(PlayerPrefsManager.TurnSpeed);
-
-        continuousMoveProvider.moveSpeed = PlayerPrefsManager.MoveSpeed;
         movementSpeedSlider.ApplyNewData(PlayerPrefsManager.MoveSpeed);
     }
 

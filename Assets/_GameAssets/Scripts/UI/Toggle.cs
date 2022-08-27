@@ -17,7 +17,7 @@ public class Toggle : MonoBehaviour, IPointerDownHandler {
     [SerializeField] private Color defaultOptionColor;
     [SerializeField] private float tweenTime;
 
-    public ToggleSide currentSide;
+    private ToggleSide currentSide;
     private ToggleState currentState = ToggleState.Switched;
     private RectTransform highlighterTransform;
 
@@ -26,7 +26,11 @@ public class Toggle : MonoBehaviour, IPointerDownHandler {
     public Action<ToggleSide> OnValueChanged;
 
 
-    private void SwitchToggle(float tweenTime) {
+    public void OnEnable() {
+        SwitchToggle(currentSide);
+    }
+
+    public void SwitchToggle(float tweenTime = 0) {
         if (currentState == ToggleState.Switching) return;
 
         currentState = ToggleState.Switching;
@@ -45,8 +49,35 @@ public class Toggle : MonoBehaviour, IPointerDownHandler {
                 break;
         }
         OnValueChanged?.Invoke(currentSide);
-        StartCoroutine(TweenToggle(tweenTime));
+
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(TweenToggle(tweenTime));
     }
+
+    public void SwitchToggle(ToggleSide side, float tweenTime = 0) {
+        if (currentState == ToggleState.Switching) return;
+
+        currentState = ToggleState.Switching;
+        switch (side) {
+            case ToggleSide.Right:
+                currentSide = ToggleSide.Right;
+                HighlightedOption = rightOption;
+                NonHighlightedOption = leftOption;
+                break;
+            case ToggleSide.Left:
+                currentSide = ToggleSide.Left;
+                HighlightedOption = leftOption;
+                NonHighlightedOption = rightOption;
+                break;
+            default:
+                break;
+        }
+        OnValueChanged?.Invoke(currentSide);
+
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(TweenToggle(tweenTime));
+    }
+
 
     private IEnumerator TweenTextColor(TMP_Text text, Color color, float tweenTime) {
         Color initialColor = text.color;
@@ -84,9 +115,6 @@ public class Toggle : MonoBehaviour, IPointerDownHandler {
 
     void Start() {
         highlighterTransform = highlighter.GetComponent<RectTransform>();
-
-        // Should come from playerprefs
-        //SwitchToggle(0f);
     }
 
     public void OnPointerDown(PointerEventData eventData) {

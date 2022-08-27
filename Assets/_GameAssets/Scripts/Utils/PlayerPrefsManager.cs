@@ -36,6 +36,14 @@ public static class PlayerPrefsManager
         PlayerPrefs.DeleteAll();
     }
 
+
+    public static void DebugPrefs() {
+        Debug.Log("MoveToggleState: " + MoveToggleState);
+        Debug.Log("TurnToggleState: " + TurnToggleState);
+        Debug.Log("MoveSpeed: " + MoveSpeed.ToString());
+        Debug.Log("TurnSpeed: " + TurnSpeed.ToString());
+        Debug.Log("SnapTurnAmount: " + SnapTurnAmount.ToString());
+    }
 }
 
 
