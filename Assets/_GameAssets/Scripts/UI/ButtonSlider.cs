@@ -26,6 +26,8 @@ public class ButtonSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     }
 
 
+    // Since the slider is disabled by default.
+    // min, max values can't be set in init methods like Awake, Start etc.
     private void InitSlider() {
         if (isSliderInit) return;
         isSliderInit = true;
