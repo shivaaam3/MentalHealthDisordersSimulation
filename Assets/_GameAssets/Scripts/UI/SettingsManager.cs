@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -15,7 +12,6 @@ public class SettingsManager : MonoBehaviour {
 
     [SerializeField] private ActionBasedContinuousMoveProvider continuousMoveProvider;
     [SerializeField] private TeleportationProvider teleportationProvider;
-    [SerializeField] private ActionBasedController teleportationRayInteractor;
     [SerializeField] private ActionBasedContinuousTurnProvider continuousTurnProvider;
     [SerializeField] private ActionBasedSnapTurnProvider snapTurnProvider;
 
@@ -52,7 +48,6 @@ public class SettingsManager : MonoBehaviour {
     //Right : CONTINUOUS
     private void OnMovementToggleValueChanged(ToggleSide toggleSide) {
         teleportationProvider.enabled = toggleSide == ToggleSide.Left;
-        teleportationRayInteractor.gameObject.SetActive(toggleSide == ToggleSide.Left);
         continuousMoveProvider.enabled = toggleSide == ToggleSide.Right;
         movementSpeedSlider.transform.parent.gameObject.SetActive(toggleSide == ToggleSide.Right);
 
