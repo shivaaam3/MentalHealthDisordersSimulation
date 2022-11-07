@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -14,6 +15,8 @@ public class SettingsManager : MonoBehaviour {
     [SerializeField] private TeleportationProvider teleportationProvider;
     [SerializeField] private ActionBasedContinuousTurnProvider continuousTurnProvider;
     [SerializeField] private ActionBasedSnapTurnProvider snapTurnProvider;
+
+    public static Action<ToggleSide> OnMovementChanged;
 
     private void OnEnable() {
         snapAngleSlider.OnValueChanged += OnSnapAngleValueChanged;
@@ -47,10 +50,22 @@ public class SettingsManager : MonoBehaviour {
     //Left : TELEPORT
     //Right : CONTINUOUS
     private void OnMovementToggleValueChanged(ToggleSide toggleSide) {
-        teleportationProvider.enabled = toggleSide == ToggleSide.Left;
-        continuousMoveProvider.enabled = toggleSide == ToggleSide.Right;
-        movementSpeedSlider.transform.parent.gameObject.SetActive(toggleSide == ToggleSide.Right);
 
+        if (toggleSide == ToggleSide.Left){
+            snapTurnProvider.leftHandSnapTurnAction.action.Enable();
+            continuousTurnProvider.leftHandTurnAction.action.Enable();
+            teleportationProvider.enabled = true;
+            continuousMoveProvider.enabled = false;
+            movementSpeedSlider.transform.parent.gameObject.SetActive(false);
+        }
+        else {
+            snapTurnProvider.leftHandSnapTurnAction.action.Disable();
+            continuousTurnProvider.leftHandTurnAction.action.Disable();
+            teleportationProvider.enabled = false;
+            continuousMoveProvider.enabled = true;
+            movementSpeedSlider.transform.parent.gameObject.SetActive(true);
+        }
+        OnMovementChanged?.Invoke(toggleSide);
         PlayerPrefsManager.MoveToggleState = toggleSide;
     }
 

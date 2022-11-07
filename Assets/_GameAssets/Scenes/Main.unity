@@ -785,6 +785,8 @@ MonoBehaviour:
   teleportationProvider: {fileID: 56824070}
   continuousTurnProvider: {fileID: 771863504}
   snapTurnProvider: {fileID: 1787361508}
+  leftTeleportRay: {fileID: 7368289068364209570}
+  rightTeleportRay: {fileID: 7368289068364209569}
 --- !u!1 &2087246161
 GameObject:
   m_ObjectHideFlags: 0
@@ -938,21 +940,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 352856351}
-    - target: {fileID: 2538657295020588050, guid: d3faee6f729f1e14daae662d29705909,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4372086998111740008, guid: d3faee6f729f1e14daae662d29705909,
         type: 3}
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 352856351}
-    - target: {fileID: 6171155945731117813, guid: d3faee6f729f1e14daae662d29705909,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6989055747277214361, guid: d3faee6f729f1e14daae662d29705909,
         type: 3}
       propertyPath: m_InteractionManager
