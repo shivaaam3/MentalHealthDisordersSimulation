@@ -20,11 +20,6 @@ public class ButtonSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public Action<float> OnValueChanged;
     private bool isSliderInit = false;
 
-    //Start is called before the first frame update
-    private void Start() {
-        
-    }
-
 
     // Since the slider is disabled by default.
     // min, max values can't be set in init methods like Awake, Start etc.
