@@ -4,5 +4,5 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Scriptable Objects/Voices")]
 public class Voices : ScriptableObject
 {
-	public List<AudioClip> clips;
+    public List<AudioClip> clips;
 }

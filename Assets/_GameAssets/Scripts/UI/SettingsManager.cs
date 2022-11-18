@@ -2,7 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class SettingsManager : MonoBehaviour {
+public class SettingsManager : MonoBehaviour
+{
 
     [SerializeField] private ButtonSlider snapAngleSlider;
     [SerializeField] private ButtonSlider turnSpeedSlider;
@@ -18,7 +19,8 @@ public class SettingsManager : MonoBehaviour {
 
     public static Action<ToggleSide> OnMovementChanged;
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         snapAngleSlider.OnValueChanged += OnSnapAngleValueChanged;
         turnSpeedSlider.OnValueChanged += OnTurnSpeedValueChanged;
         movementSpeedSlider.OnValueChanged += OnMovementSpeedValueChanged;
@@ -26,7 +28,8 @@ public class SettingsManager : MonoBehaviour {
         turnToggle.OnValueChanged += OnTurnToggleValueChanged;
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         snapAngleSlider.OnValueChanged -= OnSnapAngleValueChanged;
         turnSpeedSlider.OnValueChanged -= OnTurnSpeedValueChanged;
         movementSpeedSlider.OnValueChanged -= OnMovementSpeedValueChanged;
@@ -36,7 +39,8 @@ public class SettingsManager : MonoBehaviour {
 
     // Left : SNAP
     // Right : CONTINUOUS
-    private void OnTurnToggleValueChanged(ToggleSide toggleSide) {
+    private void OnTurnToggleValueChanged(ToggleSide toggleSide)
+    {
         snapTurnProvider.enabled = toggleSide == ToggleSide.Left;
         snapAngleSlider.transform.parent.gameObject.SetActive(toggleSide == ToggleSide.Left);
 
@@ -49,16 +53,19 @@ public class SettingsManager : MonoBehaviour {
 
     //Left : TELEPORT
     //Right : CONTINUOUS
-    private void OnMovementToggleValueChanged(ToggleSide toggleSide) {
+    private void OnMovementToggleValueChanged(ToggleSide toggleSide)
+    {
 
-        if (toggleSide == ToggleSide.Left){
+        if (toggleSide == ToggleSide.Left)
+        {
             snapTurnProvider.leftHandSnapTurnAction.action.Enable();
             continuousTurnProvider.leftHandTurnAction.action.Enable();
             teleportationProvider.enabled = true;
             continuousMoveProvider.enabled = false;
             movementSpeedSlider.transform.parent.gameObject.SetActive(false);
         }
-        else {
+        else
+        {
             snapTurnProvider.leftHandSnapTurnAction.action.Disable();
             continuousTurnProvider.leftHandTurnAction.action.Disable();
             teleportationProvider.enabled = false;
@@ -69,35 +76,41 @@ public class SettingsManager : MonoBehaviour {
         PlayerPrefsManager.MoveToggleState = toggleSide;
     }
 
-    void OnSnapAngleValueChanged(float value) {
+    void OnSnapAngleValueChanged(float value)
+    {
         snapTurnProvider.turnAmount = value;
         PlayerPrefsManager.SnapTurnAmount = value;
     }
 
-    void OnTurnSpeedValueChanged(float value) {
+    void OnTurnSpeedValueChanged(float value)
+    {
         continuousTurnProvider.turnSpeed = value;
         PlayerPrefsManager.TurnSpeed = value;
     }
 
-    void OnMovementSpeedValueChanged(float value) {
+    void OnMovementSpeedValueChanged(float value)
+    {
         continuousMoveProvider.moveSpeed = value;
         PlayerPrefsManager.MoveSpeed = value;
     }
 
 
-    public void Exit() {
+    public void Exit()
+    {
         Application.Quit();
     }
 
     // Start is called before the first frame update
-    void Start() {
+    void Start()
+    {
         InitSettings();
     }
 
 
 
 
-    void InitSettings() {
+    void InitSettings()
+    {
         //PlayerPrefsManager.ClearData();
         //PlayerPrefsManager.DebugPrefs();
 

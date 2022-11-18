@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface ISymptoms
 {
-	public void Simulate();
-	public void Stop();
+    //Hello
+    public void Simulate();
+    public void Stop();
 }

@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEditor;
 
-public class ButtonSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+public class ButtonSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+{
     [SerializeField] private Button plus;
     [SerializeField] private Button minus;
     [SerializeField] private Slider slider;
@@ -23,45 +24,53 @@ public class ButtonSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     // Since the slider is disabled by default.
     // min, max values can't be set in init methods like Awake, Start etc.
-    private void InitSlider() {
+    private void InitSlider()
+    {
         if (isSliderInit) return;
         isSliderInit = true;
         slider.minValue = minValue;
         slider.maxValue = maxValue;
     }
 
-    void OnEnable() {
+    void OnEnable()
+    {
         plus.onClick.AddListener(OnPlusClicked);
         minus.onClick.AddListener(OnMinusClicked);
     }
 
-    void OnDisable() {
+    void OnDisable()
+    {
         plus.onClick.RemoveListener(OnPlusClicked);
         minus.onClick.RemoveListener(OnMinusClicked);
     }
 
-    private void OnPlusClicked() {
+    private void OnPlusClicked()
+    {
         float value = Mathf.Clamp(slider.value + incrementValue, minValue, maxValue);
         ApplyNewData(value);
     }
 
-    private void OnMinusClicked() {
+    private void OnMinusClicked()
+    {
         float value = Mathf.Clamp(slider.value - incrementValue, minValue, maxValue);
         ApplyNewData(value);
     }
 
-    public void ApplyNewData(float sliderVal) {
+    public void ApplyNewData(float sliderVal)
+    {
         InitSlider();
         slider.value = sliderVal;
         sliderValueText.text = sliderVal.ToString();
         OnValueChanged?.Invoke(sliderVal);
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
+    public void OnPointerEnter(PointerEventData eventData)
+    {
         sliderValueGO.SetActive(true);
     }
 
-    public void OnPointerExit(PointerEventData eventData) {
+    public void OnPointerExit(PointerEventData eventData)
+    {
         sliderValueGO.SetActive(false);
 
     }
