@@ -318,22 +318,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/_GameAssets/Scripts/Symptoms/Hallucinations
+    - Assets/_GameAssets/Scripts/Symptoms/Conscience
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/_GameAssets/Scripts/Symptoms/Hallucinations
+  - Assets/_GameAssets/Scripts/Symptoms/Conscience
   m_LastFoldersGridSize: 16
   m_LastProjectPath: /Users/dobby/Documents/Projects/MentalHealthDisordersSimulation
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 103.00049}
-    m_SelectedIDs: 6e710000
-    m_LastClickedID: 29038
-    m_ExpandedIDs: 000000001e6f0000206f0000226f00001671000000ca9a3b
+    scrollPos: {x: 0, y: 165.50201}
+    m_SelectedIDs: 24710000
+    m_LastClickedID: 28964
+    m_ExpandedIDs: 000000001e6f0000206f0000226f0000246f00001e71000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -361,7 +361,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000001e6f0000206f0000226f0000
+    m_ExpandedIDs: 000000001e6f0000206f0000226f0000246f0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -392,15 +392,15 @@ MonoBehaviour:
     m_ExpandedInstanceIDs: c62300007a7a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: NewBehaviourScript
-      m_OriginalName: NewBehaviourScript
+      m_Name: MinMax
+      m_OriginalName: MinMax
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 29278
+      m_UserData: 33122
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
       m_OriginalEventType: 0
@@ -493,7 +493,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 2cfbffff
+      m_ExpandedIDs: 94f9ffff2cfbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -796,9 +796,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: -0.04133777, y: 0.2115563, z: -0.0089583555, w: -0.97645015}
   m_Size:
-    m_Target: 7.295131
+    m_Target: 5.1324253
     speed: 2
-    m_Value: 7.295131
+    m_Value: 5.1324253
   m_Ortho:
     m_Target: 0
     speed: 2
