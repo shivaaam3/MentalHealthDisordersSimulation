@@ -5,4 +5,5 @@ using UnityEngine;
 public class Voices : ScriptableObject
 {
     public List<AudioClip> clips;
+    public MinMax<float> timeAfterClip;
 }
