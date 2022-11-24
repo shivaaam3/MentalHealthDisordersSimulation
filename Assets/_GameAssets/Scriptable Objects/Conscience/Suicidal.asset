@@ -9,7 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28bfd955c3c6540f3b6310a663f1157c, type: 3}
+  m_Script: {fileID: 11500000, guid: 2374b0aa938314bb69e815da1621be69, type: 3}
   m_Name: Suicidal
   m_EditorClassIdentifier: 
   clips: []
+  timeAfterClip:
+    min: 0
+    max: 0

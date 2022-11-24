@@ -9,7 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28bfd955c3c6540f3b6310a663f1157c, type: 3}
-  m_Name: Happy
+  m_Script: {fileID: 11500000, guid: 91e175d26e28c48bd81ec460eb690b9e, type: 3}
+  m_Name: Guilty
   m_EditorClassIdentifier: 
   clips: []
+  timeAfterClip:
+    min: 0
+    max: 0
+  pitch:
+    min: 0
+    max: 0
+  speed:
+    min: 0
+    max: 0
+  volume:
+    min: 0
+    max: 0

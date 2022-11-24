@@ -58,3 +58,7 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+Assets/TestScript.cs
+Assets/TestScript.cs.meta
+Assets/_GameAssets/Scenes/MainTest.unity
+Assets/_GameAssets/Scenes/MainTest.unity.meta

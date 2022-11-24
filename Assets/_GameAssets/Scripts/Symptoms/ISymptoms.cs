@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ISymptoms
+namespace com.sharmas4.MentalHealthDisorder
 {
-    //Hello
-    public void Simulate();
-    public void Stop();
+    public interface ISymptoms
+    {
+        public bool IsSimulating { get; }
+        public void Simulate();
+        public void Stop();
+    }
 }
