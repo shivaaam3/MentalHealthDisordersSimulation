@@ -43,3 +43,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Visual Hallucinations
+    uniqueID: 2446525939
+    locked: 0
