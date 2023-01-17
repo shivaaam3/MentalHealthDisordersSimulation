@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.XR.CoreUtils;
+using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 /// <summary>
@@ -20,7 +21,7 @@ public class LookAtPlayer : MonoBehaviour
 
     private void Awake()
     {
-        cameraObject = FindObjectOfType<XRRig>().cameraGameObject;
+        cameraObject = FindObjectOfType<XROrigin>() ? FindObjectOfType<XROrigin>().Camera.gameObject : FindObjectOfType<Camera>().gameObject;
         originalRotation = transform.eulerAngles;
     }
 
@@ -32,7 +33,7 @@ public class LookAtPlayer : MonoBehaviour
     private void LookAt()
     {
         Vector3 direction = transform.position - cameraObject.transform.position;
-        Vector3 newRotation =  Quaternion.LookRotation(direction, transform.up).eulerAngles;
+        Vector3 newRotation = Quaternion.LookRotation(direction, transform.up).eulerAngles;
 
         newRotation.x = lookX ? newRotation.x : originalRotation.x;
         newRotation.y = lookY ? newRotation.y : originalRotation.y;

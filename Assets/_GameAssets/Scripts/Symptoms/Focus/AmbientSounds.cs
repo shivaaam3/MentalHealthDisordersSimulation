@@ -1,20 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace com.sharmas4.MentalHealthDisorder
 {
-    public class AmbientSounds : MonoBehaviour, ISymptoms
+    public class AmbientSounds : Symptoms
     {
+        // Provided by the preset
+        public SoundsSO sound;
 
-        public AudioSource audioSource;
-
+        private AudioSource audioSource;
         private Coroutine coroutine;
-        private SoundsSO sound;
         private AmbientSoundSO ambientSound;
 
-        public bool IsSimulating { get; private set; }
 
         // Start is called before the first frame update
         void Start()
@@ -49,13 +47,13 @@ namespace com.sharmas4.MentalHealthDisorder
         }
 
 
-        public void Simulate()
+        public override void Simulate()
         {
             IsSimulating = true;
             coroutine = StartCoroutine(SimulateCoroutine());
         }
 
-        public void Stop()
+        public override void Stop()
         {
             StopCoroutine(coroutine);
             IsSimulating = false;

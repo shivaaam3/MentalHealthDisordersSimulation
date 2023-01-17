@@ -5,28 +5,21 @@ using UnityEngine;
 namespace com.sharmas4.MentalHealthDisorder
 {
 
-    public class LightFlaresHallucinations : MonoBehaviour, ISymptoms
+    public class LightFlaresHallucinations : Symptoms
     {
-        public bool IsSimulating => throw new System.NotImplementedException();
 
-        public void Simulate()
+        public override void Simulate()
         {
-            throw new System.NotImplementedException();
+            IsSimulating = true;
         }
 
-        public void Stop()
+        public override void Stop()
         {
-            throw new System.NotImplementedException();
+            IsSimulating = false;
         }
 
         // Start is called before the first frame update
         void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
         {
 
         }

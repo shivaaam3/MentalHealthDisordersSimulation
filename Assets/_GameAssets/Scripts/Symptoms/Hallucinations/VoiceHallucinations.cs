@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace com.sharmas4.MentalHealthDisorder
 {
-    public class VoiceHallucinations : MonoBehaviour, ISymptoms
+    public class VoiceHallucinations : Symptoms
     {
+        // Provided by the preset
+        public List<SoundsSO> selectedMoods;
 
-        public AudioSource[] audioSources;
-
+        private AudioSource[] audioSources;
         private Coroutine[] coroutines;
-        private List<SoundsSO> selectedMoods;
 
-        public bool IsSimulating { get; private set; }
+
 
         // Start is called before the first frame update
         void Start()
@@ -44,6 +44,12 @@ namespace com.sharmas4.MentalHealthDisorder
                 audioSource.outputAudioMixerGroup.audioMixer.SetFloat("PitchBend", 1f / speed);
                 audioSource.pitch += pitch;
                 audioSource.volume = volume;
+
+                float angle = Random.Range(0, 3.14f);
+                float distance = Random.Range(mood.distance.min, mood.distance.max) + Random.value;
+                Vector3 pos = new Vector3(distance * Mathf.Cos(angle), Character.transform.position.y, distance * Mathf.Sin(angle));
+                audioSource.transform.position = pos;
+
                 audioSource.PlayOneShot(clip);
 
                 float interval = Random.Range(mood.timeAfterClip.min, mood.timeAfterClip.max) + Random.value;
@@ -52,7 +58,7 @@ namespace com.sharmas4.MentalHealthDisorder
             yield return new WaitForEndOfFrame();
         }
 
-        public void Simulate()
+        public override void Simulate()
         {
             IsSimulating = true;
             for (int i = 0; i < audioSources.Length; i++)
@@ -62,7 +68,7 @@ namespace com.sharmas4.MentalHealthDisorder
             }
         }
 
-        public void Stop()
+        public override void Stop()
         {
             foreach (Coroutine coroutine in coroutines)
             {
