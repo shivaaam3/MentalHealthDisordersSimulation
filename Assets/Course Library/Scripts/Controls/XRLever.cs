@@ -21,7 +21,7 @@ public class XRLever : XRBaseInteractable
 
     public bool Value { get; private set; } = false;
 
-    private XRBaseInteractor selectInteractor = null;
+    private IXRSelectInteractor selectInteractor = null;
 
     private void Start()
     {
@@ -47,7 +47,7 @@ public class XRLever : XRBaseInteractable
 
     private void StartGrab(SelectEnterEventArgs eventArgs)
     {
-        selectInteractor = eventArgs.interactor;
+        selectInteractor = eventArgs.interactorObject;
     }
 
     private void EndGrab(SelectExitEventArgs eventArgs)
@@ -82,7 +82,7 @@ public class XRLever : XRBaseInteractable
 
     private void ApplyValue(SelectExitEventArgs eventArgs)
     {
-        XRBaseInteractor interactor = eventArgs.interactor;
+        IXRSelectInteractor interactor = eventArgs.interactorObject;
         bool isOn = InOnPosition(interactor.transform.position);
 
         FindSnapDirection(isOn);

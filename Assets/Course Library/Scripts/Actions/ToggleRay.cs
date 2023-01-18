@@ -29,6 +29,7 @@ public class ToggleRay : MonoBehaviour
         //SwitchInteractors(false);
     }
 
+    [System.Obsolete]
     public void ActivateRay()
     {
         if (!TouchingObject() || forceToggle)
@@ -41,6 +42,7 @@ public class ToggleRay : MonoBehaviour
             SwitchInteractors(false);
     }
 
+    [System.Obsolete]
     private bool TouchingObject()
     {
         List<XRBaseInteractable> targets = new List<XRBaseInteractable>();

@@ -28,7 +28,7 @@ public class XRKnob : XRBaseInteractable
     public float Value { get; private set; } = 0.0f;
     public float Angle { get; private set; } = 0.0f;
 
-    private XRBaseInteractor selectInteractor = null;
+    private IXRSelectInteractor selectInteractor = null;
     private Quaternion selectRotation = Quaternion.identity;
 
     private void Start()
@@ -54,7 +54,7 @@ public class XRKnob : XRBaseInteractable
 
     private void StartTurn(SelectEnterEventArgs eventArgs)
     {
-        selectInteractor = eventArgs.interactor;
+        selectInteractor = eventArgs.interactorObject;
         selectRotation = selectInteractor.transform.rotation;
     }
 
@@ -70,7 +70,7 @@ public class XRKnob : XRBaseInteractable
 
         if (updatePhase == XRInteractionUpdateOrder.UpdatePhase.Dynamic)
         {
-            if (selectInteractor)
+            if (selectInteractor != null)
             {
                 Angle = FindRotationValue();
                 float finalRotation = ApplyRotation(Angle);

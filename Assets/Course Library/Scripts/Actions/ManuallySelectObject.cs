@@ -22,6 +22,7 @@ public class ManuallySelectObject : MonoBehaviour
         originalTriggerType = interactor.selectActionTrigger;
     }
 
+    [System.Obsolete]
     public void ManuallySelect()
     {
         interactable.gameObject.SetActive(true);
@@ -29,6 +30,7 @@ public class ManuallySelectObject : MonoBehaviour
         interactionManager.ForceSelect(interactor, interactable);
     }
 
+    [System.Obsolete]
     public void ManuallyDeselect()
     {
         interactionManager.ClearInteractorSelection(interactor);

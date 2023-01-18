@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace com.sharmas4.MentalHealthDisorder
 {
-    public class ShadowsHallucinations : Symptoms
+    public class ShapesHallucinations : Symptoms
     {
         // Provided by the preset
-        public List<ImageSO> hallucinationImages;
+        public ShapesSO shapes;
 
         private Transform[] rendererGOs;
         private Coroutine[] coroutines;
@@ -29,23 +29,22 @@ namespace com.sharmas4.MentalHealthDisorder
                 SpriteRenderer mainSR = rendererGO.Find("Main").GetComponent<SpriteRenderer>();
                 SpriteRenderer distortSR = rendererGO.Find("Distort").GetComponent<SpriteRenderer>();
 
-                int index = Random.Range(0, hallucinationImages.Count);
-                ShadowHallucinationSO visualHallucination = hallucinationImages[index] as ShadowHallucinationSO;
+                int index = Random.Range(0, shapes.sprites.Count);
 
-                rendererGO.transform.localScale = Vector3.one * visualHallucination.scale;
-                mainSR.sprite = visualHallucination._sprite;
-                distortSR.sprite = visualHallucination._sprite;
-                distortSR.GetComponent<Renderer>().material = visualHallucination._material;
+                rendererGO.localScale = Vector3.one * shapes.scale;
+                mainSR.sprite = shapes.sprites[index];
+                distortSR.sprite = shapes.sprites[index];
+                distortSR.GetComponent<Renderer>().material = shapes._material;
 
 
-                float distance = Random.Range(visualHallucination.distance.min, visualHallucination.distance.max) + Random.value;
+                float distance = Random.Range(shapes.distance.min, shapes.distance.max) + Random.value;
                 float angle = Random.Range(-60, 60) + Random.value;
                 Vector3 pos = Quaternion.Euler(0, angle, 0) * Character.transform.forward;
                 pos *= distance;
 
-                rendererGO.transform.position = pos;
+                rendererGO.position = pos;
 
-                float interval = Random.Range(visualHallucination.timeAfterClip.min, visualHallucination.timeAfterClip.max) + Random.value;
+                float interval = Random.Range(shapes.timeAfterClip.min, shapes.timeAfterClip.max) + Random.value;
                 yield return new WaitForSeconds(interval);
 
                 mainSR.enabled = false;
