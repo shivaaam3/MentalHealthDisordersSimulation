@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace com.sharmas4.MentalHealthDisorder
@@ -9,6 +10,6 @@ namespace com.sharmas4.MentalHealthDisorder
     {
         public float volumeFactor;
         public float speedFactor;
-        public float step;
+        public MinMax<int> activeTime = new MinMax<int>(5, 15);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Unity.XR.CoreUtils;
+﻿using com.sharmas4.MentalHealthDisorder;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -21,7 +22,7 @@ public class LookAtPlayer : MonoBehaviour
 
     private void Awake()
     {
-        cameraObject = FindObjectOfType<XROrigin>() ? FindObjectOfType<XROrigin>().Camera.gameObject : FindObjectOfType<Camera>().gameObject;
+        cameraObject = CharacterData.Instance.CharacterCamera;
         originalRotation = transform.eulerAngles;
     }
 

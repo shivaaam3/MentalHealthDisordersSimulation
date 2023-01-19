@@ -7,15 +7,14 @@ namespace com.sharmas4.MentalHealthDisorder
     public class Conscience : Symptoms
     {
         // Provided by the preset
-        public List<SoundsSO> selectedMoods;
+        public List<SoundsSO> selectedConscienceSoundsSO;
 
         private AudioSource[] audioSources;
         private Coroutine[] coroutines;
 
-        // Start is called before the first frame update
-        void Start()
+        protected override void Awake()
         {
-            Random.InitState(Constants.RANDOM_SEED);
+            base.Awake();
             audioSources = GetComponentsInChildren<AudioSource>();
         }
 
@@ -23,27 +22,42 @@ namespace com.sharmas4.MentalHealthDisorder
         {
             while (IsSimulating)
             {
-                audioSource.pitch = 1;
-                audioSource.outputAudioMixerGroup.audioMixer.SetFloat("PitchBend", 1);
+                Reset(audioSource);
 
-                int moodIndex = Random.Range(0, selectedMoods.Count);
-                ConscienceSO mood = selectedMoods[moodIndex] as ConscienceSO;
+                int moodIndex = Random.Range(0, selectedConscienceSoundsSO.Count);
+                ConscienceSO conscienceSO = selectedConscienceSoundsSO[moodIndex] as ConscienceSO;
 
-                float speed = Random.Range(mood.speed.min, mood.speed.max) + Random.value;
-                float volume = Random.Range(mood.volume.min, mood.volume.max) + Random.value;
+                int clipIndex = Random.Range(0, conscienceSO.clips.Count);
+                AudioClip clip = conscienceSO.clips[clipIndex];
 
-                int clipIndex = Random.Range(0, mood.clips.Count);
-                AudioClip clip = mood.clips[clipIndex];
+                float interval = Random.Range(conscienceSO.timeAfterClip.min, conscienceSO.timeAfterClip.max) + Random.value;
+                if (ShouldSimulate(conscienceSO))
+                    yield return PlaySimulation(conscienceSO, audioSource, clip);
 
-                audioSource.pitch = speed;
-                audioSource.outputAudioMixerGroup.audioMixer.SetFloat("PitchBend", 1f / speed);
-                audioSource.volume = volume;
-                audioSource.PlayOneShot(clip);
-
-                float interval = Random.Range(mood.timeAfterClip.min, mood.timeAfterClip.max) + Random.value;
-                yield return new WaitForSeconds(audioSource.clip.length + interval);
+                yield return new WaitForSeconds(clip.length + interval);
             }
             yield return new WaitForEndOfFrame();
+        }
+
+
+        private IEnumerator PlaySimulation(ConscienceSO conscienceSO, AudioSource audioSource, AudioClip clip)
+        {
+            float speed = Random.Range(conscienceSO.speed.min, conscienceSO.speed.max) + Random.value;
+            float volume = Random.Range(conscienceSO.volume.min, conscienceSO.volume.max) + Random.value;
+
+            audioSource.pitch = speed;
+            audioSource.outputAudioMixerGroup.audioMixer.SetFloat("PitchBend", 1f / speed);
+            audioSource.volume = volume;
+            audioSource.PlayOneShot(clip);
+
+            yield return null;
+        }
+
+
+        private void Reset(AudioSource audioSource)
+        {
+            audioSource.pitch = 1;
+            audioSource.outputAudioMixerGroup.audioMixer.SetFloat("PitchBend", 1);
         }
 
         public override void Simulate()

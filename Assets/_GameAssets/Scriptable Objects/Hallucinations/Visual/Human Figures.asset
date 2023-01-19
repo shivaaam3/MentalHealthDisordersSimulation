@@ -9,16 +9,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4684ac5f880b42dcac4401a9e22b0e6, type: 3}
+  m_Script: {fileID: 11500000, guid: e75300dd2f95845908d032a385196ac7, type: 3}
   m_Name: Human Figures
   m_EditorClassIdentifier: 
-  images: []
-  scale: 0
-  _sprite: {fileID: 0}
-  _material: {fileID: 0}
+  sprites:
+  - {fileID: 21300000, guid: be265fb26c2314ea887a4922b51e1cad, type: 3}
+  - {fileID: 21300000, guid: 4a7cc42b91d204ce28d0b7057f159158, type: 3}
+  - {fileID: 21300000, guid: 3bf418e9e1bc14c34bcebb4486f982d6, type: 3}
+  - {fileID: 21300000, guid: 4906fd18a6b094c11b1a7638efeeb3a4, type: 3}
+  - {fileID: 21300000, guid: c848a3e3c11fc46818c1990addaa8af5, type: 3}
+  - {fileID: 21300000, guid: a1e3e6c229a014c549213a0c68db1e8b, type: 3}
+  _materials:
+  - {fileID: 2100000, guid: 3ae55ab692e144d68923ce3ecd41f15c, type: 2}
+  - {fileID: 2100000, guid: 3be221b2e28384b0a9a79b4cbe8242db, type: 2}
+  - {fileID: 2100000, guid: 434efb7a58ea843d48e30f9c3ed35300, type: 2}
+  scale:
+    min: 0.3
+    max: 0.8
   distance:
-    min: 0
-    max: 0
-  timeAfterClip:
-    min: 0
-    max: 0
+    min: 7
+    max: 15
+  activeTime:
+    min: 2
+    max: 8
+  transparency:
+    min: 0.05
+    max: 0.2
+  probability: 0.3
