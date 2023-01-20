@@ -26,19 +26,38 @@ namespace com.sharmas4.MentalHealthDisorder
         }
 
 
-        private IEnumerator SimulateCoroutine()
+        protected override void Prepare()
         {
-            while (IsSimulating)
-            {
-                Reset();
-                float interval = Random.Range(ambientSoundSO.activeTime.min, ambientSoundSO.activeTime.max) + Random.value;
-                if (ShouldSimulate(ambientSoundSO))
-                    yield return PlaySimulation(interval);
-                else
-                    yield return new WaitForSeconds(interval);
-            }
+            base.Prepare();
+            audioSource.enabled = true;
+        }
 
+        // Called from within the SimulateCoroutine
+        protected override void CleanUp()
+        {
+            audioSource.enabled = false;
+            base.CleanUp();
+        }
+
+        protected override IEnumerator MasterCoroutine()
+        {
+            Prepare();
+            while (isMasterCoroutineRunning)
+            {
+                StartCoroutine(RunProbabilityTest());
+            }
             yield return new WaitForEndOfFrame();
+            CleanUp();
+        }
+
+
+        private IEnumerator RunProbabilityTest()
+        {
+            float interval = Random.Range(ambientSoundSO.activeTime.min, ambientSoundSO.activeTime.max) + Random.value;
+            if (ShouldSimulate(ambientSoundSO))
+                yield return PlaySimulation(interval);
+            else
+                yield return new WaitForSeconds(interval);
         }
 
         private IEnumerator PlaySimulation(float interval)
@@ -69,23 +88,5 @@ namespace com.sharmas4.MentalHealthDisorder
         }
 
 
-        private void Reset()
-        {
-            audioSource.pitch = 1;
-            audioSource.volume = 0;
-            audioSource.outputAudioMixerGroup.audioMixer.SetFloat("PitchBend", 1);
-        }
-
-        public override void Simulate()
-        {
-            IsSimulating = true;
-            coroutine = StartCoroutine(SimulateCoroutine());
-        }
-
-        public override void Stop()
-        {
-            StopCoroutine(coroutine);
-            IsSimulating = false;
-        }
     }
 }

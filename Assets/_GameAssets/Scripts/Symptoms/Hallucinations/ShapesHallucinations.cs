@@ -10,22 +10,14 @@ namespace com.sharmas4.MentalHealthDisorder
         public ShapesSO shapesSO;
 
         private Transform[] rendererGOs;
-        private Coroutine[] coroutines;
-
-
 
         protected override void Awake()
         {
             base.Awake();
             rendererGOs = new Transform[transform.childCount];
             for (int i = 0; i < rendererGOs.Length; i++)
-            {
                 rendererGOs[i] = transform.GetChild(i);
-            }
-
-            coroutines = new Coroutine[rendererGOs.Length];
         }
-
 
         // Start is called before the first frame update
         private void Start()
@@ -33,20 +25,44 @@ namespace com.sharmas4.MentalHealthDisorder
             Simulate();
         }
 
-        private IEnumerator SimulateCoroutine(Transform rendererGO)
+        protected override void Prepare()
         {
-            SpriteRenderer mainSR = rendererGO.Find("Main").GetComponent<SpriteRenderer>();
-            SpriteRenderer distortSR = rendererGO.Find("Distort").GetComponent<SpriteRenderer>();
-            while (IsSimulating)
-            {
-                float interval = Random.Range(shapesSO.activeTime.min, shapesSO.activeTime.max) + Random.value;
+            base.Prepare();
+            for (int i = 0; i < rendererGOs.Length; i++)
+                rendererGOs[i].gameObject.SetActive(true);
 
-                if (ShouldSimulate(shapesSO))
-                    yield return PlaySimulation(rendererGO, mainSR, distortSR, interval);
-                else
-                    yield return new WaitForSeconds(interval);
+        }
+
+        protected override void CleanUp()
+        {
+            for (int i = 0; i < rendererGOs.Length; i++)
+                rendererGOs[i].gameObject.SetActive(false);
+            base.CleanUp();
+        }
+
+        protected override IEnumerator MasterCoroutine()
+        {
+            Prepare();
+            while (isMasterCoroutineRunning)
+            {
+                for (int i = 0; i < rendererGOs.Length; i++)
+                {
+                    SpriteRenderer mainSR = rendererGOs[i].Find("Main").GetComponent<SpriteRenderer>();
+                    SpriteRenderer distortSR = rendererGOs[i].Find("Distort").GetComponent<SpriteRenderer>();
+                    StartCoroutine(RunProbabilityTest(rendererGOs[i], mainSR, distortSR));
+                }
             }
             yield return new WaitForEndOfFrame();
+            CleanUp();
+        }
+
+        private IEnumerator RunProbabilityTest(Transform rendererGO, SpriteRenderer mainSR, SpriteRenderer distortSR)
+        {
+            float interval = Random.Range(shapesSO.activeTime.min, shapesSO.activeTime.max) + Random.value;
+            if (ShouldSimulate(shapesSO))
+                yield return PlaySimulation(rendererGO, mainSR, distortSR, interval);
+            else
+                yield return new WaitForSeconds(interval);
         }
 
 
@@ -65,10 +81,10 @@ namespace com.sharmas4.MentalHealthDisorder
             angle *= Random.value > 0.5 ? 1 : -1;
             float transparencySR = Random.Range(shapesSO.transparency.min, shapesSO.transparency.max);
             float transparencyDistort = Random.Range(shapesSO.transparency.min, shapesSO.transparency.max);
-            Vector3 pos = Quaternion.Euler(0, angle, 0) * characterData.CharacterController.transform.forward;
+            Vector3 pos = Quaternion.Euler(0, angle, 0) * CharacterData.CharacterController.transform.forward;
             pos *= distance;
 
-            rendererGO.position = characterData.CharacterCenter + pos;
+            rendererGO.position = CharacterData.CharacterCenter + pos;
             rendererGO.localScale = Vector3.one * scale;
 
             mainSR.color = new Color(mainSR.color.r, mainSR.color.g, mainSR.color.b, transparencySR);
@@ -91,24 +107,5 @@ namespace com.sharmas4.MentalHealthDisorder
         }
 
 
-        public override void Simulate()
-        {
-            IsSimulating = true;
-            for (int i = 0; i < rendererGOs.Length; i++)
-            {
-                print(rendererGOs[i].name);
-                Coroutine coroutine = StartCoroutine(SimulateCoroutine(rendererGOs[i]));
-                coroutines[i] = coroutine;
-            }
-        }
-
-        public override void Stop()
-        {
-            foreach (Coroutine coroutine in coroutines)
-            {
-                StopCoroutine(coroutine);
-            }
-            IsSimulating = false;
-        }
     }
 }

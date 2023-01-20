@@ -20,29 +20,46 @@ namespace com.sharmas4.MentalHealthDisorder
             coroutines = new Coroutine[audioSources.Length];
         }
 
-        private IEnumerator SimulateCoroutine(AudioSource audioSource)
+        protected override void Prepare()
         {
-            while (IsSimulating)
+            base.Prepare();
+            for (int i = 0; i < audioSources.Length; i++)
+                audioSources[i].enabled = true;
+        }
+
+        protected override void CleanUp()
+        {
+            for (int i = 0; i < audioSources.Length; i++)
+                audioSources[i].enabled = false;
+            base.CleanUp();
+        }
+
+        protected override IEnumerator MasterCoroutine()
+        {
+            Prepare();
+            while (isMasterCoroutineRunning)
             {
-                Reset(audioSource);
-
-                int moodIndex = Random.Range(0, selectedMoodsSoundsSO.Count);
-                VoiceHallucinationSO voiceHallucinationSO = selectedMoodsSoundsSO[moodIndex] as VoiceHallucinationSO;
-
-                int clipIndex = Random.Range(0, voiceHallucinationSO.clips.Count);
-                AudioClip clip = voiceHallucinationSO.clips[clipIndex];
-
-                float interval = Random.Range(voiceHallucinationSO.timeAfterClip.min, voiceHallucinationSO.timeAfterClip.max) + Random.value;
-                if (ShouldSimulate(voiceHallucinationSO))
-                    yield return PlaySimulation(voiceHallucinationSO, audioSource, clip);
-
-                yield return new WaitForSeconds(clip.length + interval);
+                for (int i = 0; i < audioSources.Length; i++)
+                    StartCoroutine(RunProbabilityTest(audioSources[i]));
             }
             yield return new WaitForEndOfFrame();
+            CleanUp();
+        }
+
+        private IEnumerator RunProbabilityTest(AudioSource audioSource)
+        {
+            int moodIndex = Random.Range(0, selectedMoodsSoundsSO.Count);
+            VoiceHallucinationSO voiceHallucinationSO = selectedMoodsSoundsSO[moodIndex] as VoiceHallucinationSO;
+
+            float interval = Random.Range(voiceHallucinationSO.timeAfterClip.min, voiceHallucinationSO.timeAfterClip.max) + Random.value;
+            if (ShouldSimulate(voiceHallucinationSO))
+                yield return PlaySimulation(voiceHallucinationSO, audioSource);
+
+            yield return new WaitForSeconds(interval);
         }
 
 
-        private IEnumerator PlaySimulation(VoiceHallucinationSO voiceHallucinationSO, AudioSource audioSource, AudioClip clip)
+        private IEnumerator PlaySimulation(VoiceHallucinationSO voiceHallucinationSO, AudioSource audioSource)
         {
 
             float pitch = Random.Range(voiceHallucinationSO.pitch.min, voiceHallucinationSO.pitch.max) + Random.value;
@@ -56,39 +73,16 @@ namespace com.sharmas4.MentalHealthDisorder
 
             float angle = Random.Range(0, 3.14f);
             float distance = Random.Range(voiceHallucinationSO.distance.min, voiceHallucinationSO.distance.max) + Random.value;
-            Vector3 pos = new Vector3(distance * Mathf.Cos(angle), characterData.CharacterHeadPos.y, distance * Mathf.Sin(angle));
+            Vector3 pos = new Vector3(distance * Mathf.Cos(angle), CharacterData.CharacterHeadPos.y, distance * Mathf.Sin(angle));
             audioSource.transform.position = pos;
+
+            int clipIndex = Random.Range(0, voiceHallucinationSO.clips.Count);
+            AudioClip clip = voiceHallucinationSO.clips[clipIndex];
 
             audioSource.PlayOneShot(clip);
 
-            yield return null;
+            yield return new WaitForSeconds(clip.length);
         }
 
-
-        private void Reset(AudioSource audioSource)
-        {
-            audioSource.pitch = 1;
-            audioSource.volume = 0;
-            audioSource.outputAudioMixerGroup.audioMixer.SetFloat("PitchBend", 1);
-        }
-
-        public override void Simulate()
-        {
-            IsSimulating = true;
-            for (int i = 0; i < audioSources.Length; i++)
-            {
-                Coroutine coroutine = StartCoroutine(SimulateCoroutine(audioSources[i]));
-                coroutines[i] = coroutine;
-            }
-        }
-
-        public override void Stop()
-        {
-            foreach (Coroutine coroutine in coroutines)
-            {
-                StopCoroutine(coroutine);
-            }
-            IsSimulating = false;
-        }
     }
 }

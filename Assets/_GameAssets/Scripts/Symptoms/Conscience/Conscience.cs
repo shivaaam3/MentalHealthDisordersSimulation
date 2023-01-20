@@ -10,7 +10,6 @@ namespace com.sharmas4.MentalHealthDisorder
         public List<SoundsSO> selectedConscienceSoundsSO;
 
         private AudioSource[] audioSources;
-        private Coroutine[] coroutines;
 
         protected override void Awake()
         {
@@ -18,29 +17,46 @@ namespace com.sharmas4.MentalHealthDisorder
             audioSources = GetComponentsInChildren<AudioSource>();
         }
 
-        private IEnumerator SimulateCoroutine(AudioSource audioSource)
+        protected override void Prepare()
         {
-            while (IsSimulating)
-            {
-                Reset(audioSource);
-
-                int moodIndex = Random.Range(0, selectedConscienceSoundsSO.Count);
-                ConscienceSO conscienceSO = selectedConscienceSoundsSO[moodIndex] as ConscienceSO;
-
-                int clipIndex = Random.Range(0, conscienceSO.clips.Count);
-                AudioClip clip = conscienceSO.clips[clipIndex];
-
-                float interval = Random.Range(conscienceSO.timeAfterClip.min, conscienceSO.timeAfterClip.max) + Random.value;
-                if (ShouldSimulate(conscienceSO))
-                    yield return PlaySimulation(conscienceSO, audioSource, clip);
-
-                yield return new WaitForSeconds(clip.length + interval);
-            }
-            yield return new WaitForEndOfFrame();
+            base.Prepare();
+            for (int i = 0; i < audioSources.Length; i++)
+                audioSources[i].enabled = true;
         }
 
+        protected override void CleanUp()
+        {
+            for (int i = 0; i < audioSources.Length; i++)
+                audioSources[i].enabled = false;
+            base.CleanUp();
+        }
 
-        private IEnumerator PlaySimulation(ConscienceSO conscienceSO, AudioSource audioSource, AudioClip clip)
+        protected override IEnumerator MasterCoroutine()
+        {
+            Prepare();
+            while (isMasterCoroutineRunning)
+            {
+                for (int i = 0; i < audioSources.Length; i++)
+                    StartCoroutine(RunProbabilityTest(audioSources[i]));
+            }
+            yield return new WaitForEndOfFrame();
+            CleanUp();
+        }
+
+        private IEnumerator RunProbabilityTest(AudioSource audioSource)
+        {
+            int moodIndex = Random.Range(0, selectedConscienceSoundsSO.Count);
+            ConscienceSO conscienceSO = selectedConscienceSoundsSO[moodIndex] as ConscienceSO;
+
+            float interval = Random.Range(conscienceSO.timeAfterClip.min, conscienceSO.timeAfterClip.max) + Random.value;
+            if (ShouldSimulate(conscienceSO))
+                yield return PlaySimulation(conscienceSO, audioSource);
+
+            yield return new WaitForSeconds(interval);
+
+        }
+
+        private IEnumerator PlaySimulation(ConscienceSO conscienceSO, AudioSource audioSource)
         {
             float speed = Random.Range(conscienceSO.speed.min, conscienceSO.speed.max) + Random.value;
             float volume = Random.Range(conscienceSO.volume.min, conscienceSO.volume.max) + Random.value;
@@ -48,35 +64,13 @@ namespace com.sharmas4.MentalHealthDisorder
             audioSource.pitch = speed;
             audioSource.outputAudioMixerGroup.audioMixer.SetFloat("PitchBend", 1f / speed);
             audioSource.volume = volume;
+
+            int clipIndex = Random.Range(0, conscienceSO.clips.Count);
+            AudioClip clip = conscienceSO.clips[clipIndex];
             audioSource.PlayOneShot(clip);
 
-            yield return null;
+            yield return new WaitForSeconds(clip.length);
         }
 
-
-        private void Reset(AudioSource audioSource)
-        {
-            audioSource.pitch = 1;
-            audioSource.outputAudioMixerGroup.audioMixer.SetFloat("PitchBend", 1);
-        }
-
-        public override void Simulate()
-        {
-            IsSimulating = true;
-            for (int i = 0; i < audioSources.Length; i++)
-            {
-                Coroutine coroutine = StartCoroutine(SimulateCoroutine(audioSources[i]));
-                coroutines[i] = coroutine;
-            }
-        }
-
-        public override void Stop()
-        {
-            foreach (Coroutine coroutine in coroutines)
-            {
-                StopCoroutine(coroutine);
-            }
-            IsSimulating = false;
-        }
     }
 }

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.VersionControl.Asset;
+using static UnityEngine.ParticleSystem;
 
 namespace com.sharmas4.MentalHealthDisorder
 {
@@ -10,53 +10,74 @@ namespace com.sharmas4.MentalHealthDisorder
     {
         public ParticlesSO particlesSO;
         private Transform particlesParentT;
-        private Coroutine coroutine;
+        private ParticleSystem[] particles;
 
         protected override void Awake()
         {
             base.Awake();
             particlesParentT = transform.GetChild(0);
+            particles = GetComponentsInChildren<ParticleSystem>();
             EnableDisableParticles(false);
         }
 
-
-        private IEnumerator SimulateCoroutine()
+        private void Start()
         {
-            while (IsSimulating)
+            Simulate();
+        }
+
+
+        protected override void Prepare()
+        {
+            base.Prepare();
+            particlesParentT.parent = CharacterData.CharacterCamera.transform;
+            particlesParentT.localPosition = particlesSO.offset;
+            particlesParentT.localRotation = Quaternion.identity;
+        }
+
+        // Called from within the SimulateCoroutine
+        protected override void CleanUp()
+        {
+            particlesParentT.parent = transform;
+            particlesParentT.localPosition = particlesSO.offset;
+            particlesParentT.localRotation = Quaternion.identity;
+            base.CleanUp();
+        }
+
+        protected override IEnumerator MasterCoroutine()
+        {
+            Prepare();
+            while (isMasterCoroutineRunning)
             {
-                float interval = Random.Range(particlesSO.activeTime.min, particlesSO.activeTime.max) + Random.value;
-
-                if (ShouldSimulate(particlesSO))
-                    yield return PlaySimulation();
-
-                yield return new WaitForSeconds(interval);
+                StartCoroutine(RunProbabilityTest());
             }
             yield return new WaitForEndOfFrame();
+            CleanUp();
         }
 
-        private IEnumerator PlaySimulation()
+        private IEnumerator RunProbabilityTest()
+        {
+            float interval = Random.Range(particlesSO.activeTime.min, particlesSO.activeTime.max) + Random.value;
+
+            if (ShouldSimulate(particlesSO))
+                yield return PlaySimulation(interval);
+            else
+                yield return new WaitForSeconds(interval);
+        }
+
+        private IEnumerator PlaySimulation(float interval)
         {
             EnableDisableParticles(true);
-            yield return null;
+            yield return new WaitForSeconds(interval);
+            EnableDisableParticles(false);
         }
 
-        void EnableDisableParticles(bool state)
+        private void EnableDisableParticles(bool state)
         {
-            particlesParentT.gameObject.SetActive(state);
-        }
-
-        public override void Simulate()
-        {
-            IsSimulating = true;
-            particlesParentT.parent = characterData.CharacterCamera.transform;
-            coroutine = StartCoroutine(SimulateCoroutine());
-        }
-
-        public override void Stop()
-        {
-            StopCoroutine(coroutine);
-            particlesParentT.parent = transform;
-            IsSimulating = false;
+            foreach (ParticleSystem particle in particles)
+            {
+                var em = particle.emission;
+                em.enabled = state;
+            }
         }
 
     }
