@@ -27,12 +27,12 @@ namespace com.sharmas4.MentalHealthDisorder
         protected virtual void Awake()
         {
             Random.InitState((int)Time.time);
-            CharacterData = CharacterData.Instance;
         }
 
         // Start is called before the first frame update
         protected virtual void Start()
         {
+            CharacterData = CharacterData.Instance;
             Simulate();
         }
 

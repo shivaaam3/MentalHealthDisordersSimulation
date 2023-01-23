@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.VersionControl.Asset;
 
 namespace com.sharmas4.MentalHealthDisorder
 {
@@ -18,7 +17,7 @@ namespace com.sharmas4.MentalHealthDisorder
         protected override void Awake()
         {
             base.Awake();
-            audioSource = GetComponent<AudioSource>();
+            audioSource = GetComponentInChildren<AudioSource>();
             ambientSoundSO = soundSO as AmbientSoundSO;
 
             audioSource.clip = ambientSoundSO.clips[0];
@@ -30,7 +29,6 @@ namespace com.sharmas4.MentalHealthDisorder
         {
             base.Prepare();
             noOfCoroutinesRunning = 1;
-            audioSource.enabled = true;
         }
 
         protected override void CleanUp()
@@ -44,6 +42,7 @@ namespace com.sharmas4.MentalHealthDisorder
         public override void Simulate()
         {
             Prepare();
+            audioSource.enabled = false;
             coroutine = StartCoroutine(MasterCoroutine());
         }
 
@@ -69,6 +68,7 @@ namespace com.sharmas4.MentalHealthDisorder
             float speed = Mathf.Clamp(audioSource.pitch + ambientSoundSO.speedFactor, ambientSoundSO.volume.min, ambientSoundSO.volume.max);
             audioSource.pitch = speed;
             audioSource.outputAudioMixerGroup.audioMixer.SetFloat("PitchBend", 1f / speed);
+            audioSource.enabled = true;
             audioSource.Play();
 
             float time = 0;
@@ -88,6 +88,7 @@ namespace com.sharmas4.MentalHealthDisorder
                 audioSource.volume = currentVolume;
                 yield return null;
             }
+            audioSource.enabled = false;
         }
 
         public override void StopAbrupt()

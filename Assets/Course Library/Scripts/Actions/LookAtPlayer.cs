@@ -20,7 +20,7 @@ public class LookAtPlayer : MonoBehaviour
     private GameObject cameraObject = null;
     private Vector3 originalRotation = Vector3.zero;
 
-    private void Awake()
+    private void Start()
     {
         cameraObject = CharacterData.Instance.CharacterCamera;
         originalRotation = transform.eulerAngles;

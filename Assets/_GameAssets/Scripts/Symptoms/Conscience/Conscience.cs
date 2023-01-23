@@ -22,12 +22,7 @@ namespace com.sharmas4.MentalHealthDisorder
         protected override void Prepare()
         {
             base.Prepare();
-
-            int count = audioSources.Length;
-            noOfCoroutinesRunning = count;
-
-            for (int i = 0; i < count; i++)
-                audioSources[i].enabled = true;
+            noOfCoroutinesRunning = audioSources.Length;
         }
 
         protected override void CleanUp()
@@ -43,7 +38,10 @@ namespace com.sharmas4.MentalHealthDisorder
         {
             Prepare();
             for (int i = 0; i < audioSources.Length; i++)
+            {
+                audioSources[i].enabled = false;
                 coroutines[i] = StartCoroutine(MasterCoroutine(audioSources[i]));
+            }
         }
 
         private IEnumerator MasterCoroutine(AudioSource audioSource)
@@ -75,9 +73,11 @@ namespace com.sharmas4.MentalHealthDisorder
 
             int clipIndex = Random.Range(0, conscienceSO.clips.Count);
             AudioClip clip = conscienceSO.clips[clipIndex];
+            audioSource.enabled = true;
             audioSource.PlayOneShot(clip);
 
             yield return new WaitForSeconds(clip.length);
+            audioSource.enabled = false;
         }
 
 

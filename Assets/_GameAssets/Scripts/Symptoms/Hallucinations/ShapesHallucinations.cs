@@ -9,8 +9,8 @@ namespace com.sharmas4.MentalHealthDisorder
         // Provided by the preset
         public ShapesSO shapesSO;
 
-        private Transform[] rendererGOs;
-        private Coroutine[] coroutines;
+        protected Transform[] rendererGOs;
+        protected Coroutine[] coroutines;
 
 
         protected override void Awake()
@@ -27,12 +27,7 @@ namespace com.sharmas4.MentalHealthDisorder
         protected override void Prepare()
         {
             base.Prepare();
-
-            int count = rendererGOs.Length;
-            noOfCoroutinesRunning = count;
-
-            for (int i = 0; i < count; i++)
-                rendererGOs[i].gameObject.SetActive(true);
+            noOfCoroutinesRunning = rendererGOs.Length;
         }
 
         protected override void CleanUp()
@@ -49,13 +44,14 @@ namespace com.sharmas4.MentalHealthDisorder
             Prepare();
             for (int i = 0; i < rendererGOs.Length; i++)
             {
+                rendererGOs[i].gameObject.SetActive(false);
                 SpriteRenderer mainSR = rendererGOs[i].Find("Main").GetComponent<SpriteRenderer>();
                 SpriteRenderer distortSR = rendererGOs[i].Find("Distort").GetComponent<SpriteRenderer>();
                 coroutines[i] = StartCoroutine(MasterCoroutine(rendererGOs[i], mainSR, distortSR));
             }
         }
 
-        private IEnumerator MasterCoroutine(Transform rendererGO, SpriteRenderer mainSR, SpriteRenderer distortSR)
+        protected IEnumerator MasterCoroutine(Transform rendererGO, SpriteRenderer mainSR, SpriteRenderer distortSR)
         {
             while (isSimulating)
             {
@@ -71,7 +67,7 @@ namespace com.sharmas4.MentalHealthDisorder
         }
 
 
-        private IEnumerator PlaySimulation(Transform rendererGO, SpriteRenderer mainSR, SpriteRenderer distortSR, float interval)
+        protected virtual IEnumerator PlaySimulation(Transform rendererGO, SpriteRenderer mainSR, SpriteRenderer distortSR, float interval)
         {
             int index = Random.Range(0, shapesSO.sprites.Count);
 
@@ -94,6 +90,7 @@ namespace com.sharmas4.MentalHealthDisorder
 
             mainSR.color = new Color(mainSR.color.r, mainSR.color.g, mainSR.color.b, transparencySR);
             distortSR.color = new Color(distortSR.color.r, distortSR.color.g, distortSR.color.b, transparencyDistort);
+            rendererGO.gameObject.SetActive(true);
 
             yield return new WaitForSeconds(interval - 1);
             float time = 0;
@@ -109,6 +106,7 @@ namespace com.sharmas4.MentalHealthDisorder
 
             mainSR.color = new Color(mainSR.color.r, mainSR.color.g, mainSR.color.b, 0);
             distortSR.color = new Color(distortSR.color.r, distortSR.color.g, distortSR.color.b, 0);
+            rendererGO.gameObject.SetActive(false);
         }
 
 
