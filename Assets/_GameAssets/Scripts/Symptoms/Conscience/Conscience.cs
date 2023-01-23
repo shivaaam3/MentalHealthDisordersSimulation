@@ -10,50 +10,58 @@ namespace com.sharmas4.MentalHealthDisorder
         public List<SoundsSO> selectedConscienceSoundsSO;
 
         private AudioSource[] audioSources;
+        private Coroutine[] coroutines;
 
         protected override void Awake()
         {
             base.Awake();
             audioSources = GetComponentsInChildren<AudioSource>();
+            coroutines = new Coroutine[audioSources.Length];
         }
 
         protected override void Prepare()
         {
             base.Prepare();
-            for (int i = 0; i < audioSources.Length; i++)
+
+            int count = audioSources.Length;
+            noOfCoroutinesRunning = count;
+
+            for (int i = 0; i < count; i++)
                 audioSources[i].enabled = true;
         }
 
         protected override void CleanUp()
         {
-            for (int i = 0; i < audioSources.Length; i++)
-                audioSources[i].enabled = false;
-            base.CleanUp();
-        }
-
-        protected override IEnumerator MasterCoroutine()
-        {
-            Prepare();
-            while (isMasterCoroutineRunning)
+            if (noOfCoroutinesRunning <= 0)
             {
                 for (int i = 0; i < audioSources.Length; i++)
-                    StartCoroutine(RunProbabilityTest(audioSources[i]));
+                    audioSources[i].enabled = false;
             }
-            yield return new WaitForEndOfFrame();
-            CleanUp();
         }
 
-        private IEnumerator RunProbabilityTest(AudioSource audioSource)
+        public override void Simulate()
         {
-            int moodIndex = Random.Range(0, selectedConscienceSoundsSO.Count);
-            ConscienceSO conscienceSO = selectedConscienceSoundsSO[moodIndex] as ConscienceSO;
+            Prepare();
+            for (int i = 0; i < audioSources.Length; i++)
+                coroutines[i] = StartCoroutine(MasterCoroutine(audioSources[i]));
+        }
 
-            float interval = Random.Range(conscienceSO.timeAfterClip.min, conscienceSO.timeAfterClip.max) + Random.value;
-            if (ShouldSimulate(conscienceSO))
-                yield return PlaySimulation(conscienceSO, audioSource);
+        private IEnumerator MasterCoroutine(AudioSource audioSource)
+        {
+            while (isSimulating)
+            {
+                int moodIndex = Random.Range(0, selectedConscienceSoundsSO.Count);
+                ConscienceSO conscienceSO = selectedConscienceSoundsSO[moodIndex] as ConscienceSO;
 
-            yield return new WaitForSeconds(interval);
+                float interval = Random.Range(conscienceSO.timeAfterClip.min, conscienceSO.timeAfterClip.max) + Random.value;
+                if (ShouldSimulate(conscienceSO))
+                    yield return PlaySimulation(conscienceSO, audioSource);
 
+                yield return new WaitForSeconds(interval);
+            }
+
+            --noOfCoroutinesRunning;
+            CleanUp();
         }
 
         private IEnumerator PlaySimulation(ConscienceSO conscienceSO, AudioSource audioSource)
@@ -70,6 +78,18 @@ namespace com.sharmas4.MentalHealthDisorder
             audioSource.PlayOneShot(clip);
 
             yield return new WaitForSeconds(clip.length);
+        }
+
+
+        public override void StopAbrupt()
+        {
+            for (int i = 0; i < coroutines.Length; i++)
+            {
+                if (coroutines[i] != null)
+                    StopCoroutine(coroutines[i]);
+            }
+
+            base.StopAbrupt();
         }
 
     }

@@ -29,35 +29,38 @@ namespace com.sharmas4.MentalHealthDisorder
         protected override void Prepare()
         {
             base.Prepare();
+            noOfCoroutinesRunning = 1;
             audioSource.enabled = true;
         }
 
-        // Called from within the SimulateCoroutine
         protected override void CleanUp()
         {
-            audioSource.enabled = false;
-            base.CleanUp();
+            if (noOfCoroutinesRunning <= 0)
+            {
+                audioSource.enabled = false;
+            }
         }
 
-        protected override IEnumerator MasterCoroutine()
+        public override void Simulate()
         {
             Prepare();
-            while (isMasterCoroutineRunning)
-            {
-                StartCoroutine(RunProbabilityTest());
-            }
-            yield return new WaitForEndOfFrame();
-            CleanUp();
+            coroutine = StartCoroutine(MasterCoroutine());
         }
 
 
-        private IEnumerator RunProbabilityTest()
+        private IEnumerator MasterCoroutine()
         {
-            float interval = Random.Range(ambientSoundSO.activeTime.min, ambientSoundSO.activeTime.max) + Random.value;
-            if (ShouldSimulate(ambientSoundSO))
-                yield return PlaySimulation(interval);
-            else
-                yield return new WaitForSeconds(interval);
+            while (isSimulating)
+            {
+                float interval = Random.Range(ambientSoundSO.activeTime.min, ambientSoundSO.activeTime.max) + Random.value;
+                if (ShouldSimulate(ambientSoundSO))
+                    yield return PlaySimulation(interval);
+                else
+                    yield return new WaitForSeconds(interval);
+            }
+
+            --noOfCoroutinesRunning;
+            CleanUp();
         }
 
         private IEnumerator PlaySimulation(float interval)
@@ -87,6 +90,12 @@ namespace com.sharmas4.MentalHealthDisorder
             }
         }
 
+        public override void StopAbrupt()
+        {
+            if (coroutine != null)
+                StopCoroutine(coroutine);
 
+            base.StopAbrupt();
+        }
     }
 }

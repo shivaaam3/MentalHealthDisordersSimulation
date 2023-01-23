@@ -10,59 +10,64 @@ namespace com.sharmas4.MentalHealthDisorder
         public ShapesSO shapesSO;
 
         private Transform[] rendererGOs;
+        private Coroutine[] coroutines;
+
 
         protected override void Awake()
         {
             base.Awake();
             rendererGOs = new Transform[transform.childCount];
             for (int i = 0; i < rendererGOs.Length; i++)
+            {
                 rendererGOs[i] = transform.GetChild(i);
-        }
-
-        // Start is called before the first frame update
-        private void Start()
-        {
-            Simulate();
+            }
+            coroutines = new Coroutine[rendererGOs.Length];
         }
 
         protected override void Prepare()
         {
             base.Prepare();
-            for (int i = 0; i < rendererGOs.Length; i++)
-                rendererGOs[i].gameObject.SetActive(true);
 
+            int count = rendererGOs.Length;
+            noOfCoroutinesRunning = count;
+
+            for (int i = 0; i < count; i++)
+                rendererGOs[i].gameObject.SetActive(true);
         }
 
         protected override void CleanUp()
         {
-            for (int i = 0; i < rendererGOs.Length; i++)
-                rendererGOs[i].gameObject.SetActive(false);
-            base.CleanUp();
-        }
-
-        protected override IEnumerator MasterCoroutine()
-        {
-            Prepare();
-            while (isMasterCoroutineRunning)
+            if (noOfCoroutinesRunning <= 0)
             {
                 for (int i = 0; i < rendererGOs.Length; i++)
-                {
-                    SpriteRenderer mainSR = rendererGOs[i].Find("Main").GetComponent<SpriteRenderer>();
-                    SpriteRenderer distortSR = rendererGOs[i].Find("Distort").GetComponent<SpriteRenderer>();
-                    StartCoroutine(RunProbabilityTest(rendererGOs[i], mainSR, distortSR));
-                }
+                    rendererGOs[i].gameObject.SetActive(false);
             }
-            yield return new WaitForEndOfFrame();
-            CleanUp();
         }
 
-        private IEnumerator RunProbabilityTest(Transform rendererGO, SpriteRenderer mainSR, SpriteRenderer distortSR)
+        public override void Simulate()
         {
-            float interval = Random.Range(shapesSO.activeTime.min, shapesSO.activeTime.max) + Random.value;
-            if (ShouldSimulate(shapesSO))
-                yield return PlaySimulation(rendererGO, mainSR, distortSR, interval);
-            else
-                yield return new WaitForSeconds(interval);
+            Prepare();
+            for (int i = 0; i < rendererGOs.Length; i++)
+            {
+                SpriteRenderer mainSR = rendererGOs[i].Find("Main").GetComponent<SpriteRenderer>();
+                SpriteRenderer distortSR = rendererGOs[i].Find("Distort").GetComponent<SpriteRenderer>();
+                coroutines[i] = StartCoroutine(MasterCoroutine(rendererGOs[i], mainSR, distortSR));
+            }
+        }
+
+        private IEnumerator MasterCoroutine(Transform rendererGO, SpriteRenderer mainSR, SpriteRenderer distortSR)
+        {
+            while (isSimulating)
+            {
+                float interval = Random.Range(shapesSO.activeTime.min, shapesSO.activeTime.max) + Random.value;
+                if (ShouldSimulate(shapesSO))
+                    yield return PlaySimulation(rendererGO, mainSR, distortSR, interval);
+                else
+                    yield return new WaitForSeconds(interval);
+            }
+
+            --noOfCoroutinesRunning;
+            CleanUp();
         }
 
 
@@ -107,5 +112,15 @@ namespace com.sharmas4.MentalHealthDisorder
         }
 
 
+        public override void StopAbrupt()
+        {
+            for (int i = 0; i < coroutines.Length; i++)
+            {
+                if (coroutines[i] != null)
+                    StopCoroutine(coroutines[i]);
+            }
+
+            base.StopAbrupt();
+        }
     }
 }

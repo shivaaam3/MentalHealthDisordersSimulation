@@ -23,39 +23,46 @@ namespace com.sharmas4.MentalHealthDisorder
         protected override void Prepare()
         {
             base.Prepare();
-            for (int i = 0; i < audioSources.Length; i++)
+
+            int count = audioSources.Length;
+            noOfCoroutinesRunning = count;
+
+            for (int i = 0; i < count; i++)
                 audioSources[i].enabled = true;
         }
 
         protected override void CleanUp()
         {
-            for (int i = 0; i < audioSources.Length; i++)
-                audioSources[i].enabled = false;
-            base.CleanUp();
-        }
-
-        protected override IEnumerator MasterCoroutine()
-        {
-            Prepare();
-            while (isMasterCoroutineRunning)
+            if (noOfCoroutinesRunning <= 0)
             {
                 for (int i = 0; i < audioSources.Length; i++)
-                    StartCoroutine(RunProbabilityTest(audioSources[i]));
+                    audioSources[i].enabled = false;
             }
-            yield return new WaitForEndOfFrame();
-            CleanUp();
         }
 
-        private IEnumerator RunProbabilityTest(AudioSource audioSource)
+        public override void Simulate()
         {
-            int moodIndex = Random.Range(0, selectedMoodsSoundsSO.Count);
-            VoiceHallucinationSO voiceHallucinationSO = selectedMoodsSoundsSO[moodIndex] as VoiceHallucinationSO;
+            Prepare();
+            for (int i = 0; i < audioSources.Length; i++)
+                StartCoroutine(MasterCoroutine(audioSources[i]));
+        }
 
-            float interval = Random.Range(voiceHallucinationSO.timeAfterClip.min, voiceHallucinationSO.timeAfterClip.max) + Random.value;
-            if (ShouldSimulate(voiceHallucinationSO))
-                yield return PlaySimulation(voiceHallucinationSO, audioSource);
+        private IEnumerator MasterCoroutine(AudioSource audioSource)
+        {
+            while (isSimulating)
+            {
+                int moodIndex = Random.Range(0, selectedMoodsSoundsSO.Count);
+                VoiceHallucinationSO voiceHallucinationSO = selectedMoodsSoundsSO[moodIndex] as VoiceHallucinationSO;
 
-            yield return new WaitForSeconds(interval);
+                float interval = Random.Range(voiceHallucinationSO.timeAfterClip.min, voiceHallucinationSO.timeAfterClip.max) + Random.value;
+                if (ShouldSimulate(voiceHallucinationSO))
+                    yield return PlaySimulation(voiceHallucinationSO, audioSource);
+
+                yield return new WaitForSeconds(interval);
+            }
+
+            --noOfCoroutinesRunning;
+            CleanUp();
         }
 
 
@@ -84,5 +91,16 @@ namespace com.sharmas4.MentalHealthDisorder
             yield return new WaitForSeconds(clip.length);
         }
 
+
+        public override void StopAbrupt()
+        {
+            for (int i = 0; i < coroutines.Length; i++)
+            {
+                if (coroutines[i] != null)
+                    StopCoroutine(coroutines[i]);
+            }
+
+            base.StopAbrupt();
+        }
     }
 }

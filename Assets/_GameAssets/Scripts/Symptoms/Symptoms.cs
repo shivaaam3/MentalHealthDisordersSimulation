@@ -6,56 +6,63 @@ namespace com.sharmas4.MentalHealthDisorder
 {
     public abstract class Symptoms : MonoBehaviour
     {
+        protected int noOfCoroutinesRunning = -1;
+
         // For the other scripts to know that the simulation is entirely stopped
-        public bool IsSimulating { get; protected set; }
+        public bool IsSimulationRunning => noOfCoroutinesRunning <= 0;
 
         // Calculates if the simulation would be simulated or skipped for every iteration while the coroutine runs
         protected bool ShouldSimulate(SymptomsSO so)
         {
             return Random.value <= so.probability;
         }
+
         protected CharacterData CharacterData { get; private set; }
 
-        protected bool isMasterCoroutineRunning = false;
-        protected Coroutine masterCoroutine;
+        // Guides the coroutine if it should run
+        protected bool isSimulating = false;
 
-        protected abstract IEnumerator MasterCoroutine();
+        //protected abstract IEnumerator MasterCoroutine();
 
         protected virtual void Awake()
         {
             Random.InitState((int)Time.time);
-            CharacterData = CharacterData.Instance; ;
+            CharacterData = CharacterData.Instance;
         }
 
+        // Start is called before the first frame update
+        protected virtual void Start()
+        {
+            Simulate();
+        }
 
-        // Call from within the master coroutine preferrably in the beginning 
+        // Called immediately before the instances of the MasterCoroutine start running
+        // Called from within the Simulate method
         protected virtual void Prepare()
         {
-            IsSimulating = true;
+            isSimulating = true;
         }
 
-        // Call from within the master coroutine preferrably in the end 
-        protected virtual void CleanUp()
-        {
-            IsSimulating = false;
-        }
+        // The method to start the symptom simulation
+        public abstract void Simulate();
 
-        public void Simulate()
-        {
-            isMasterCoroutineRunning = true;
-            masterCoroutine = StartCoroutine(MasterCoroutine());
-        }
 
+        // Called by the instance of the MasterCoroutine that terminates last
+        // Used to reset the components/ values to their default states
+        protected abstract void CleanUp();
+
+
+        // Let's the final iteration of the while loops run and then ends the corourine naturally
         public void Stop()
         {
-            isMasterCoroutineRunning = false;
+            isSimulating = false;
         }
 
-        public void StopAbrupt()
+        // Stops the coroutine immediately 
+        public virtual void StopAbrupt()
         {
+            noOfCoroutinesRunning = -1;
             CleanUp();
-            if (masterCoroutine != null)
-                StopCoroutine(masterCoroutine);
         }
     }
 }
