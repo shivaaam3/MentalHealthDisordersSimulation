@@ -18,6 +18,7 @@ namespace com.sharmas4.MentalHealthDisorder
         {
             base.Awake();
             audioSource = GetComponentInChildren<AudioSource>();
+            audioSource.enabled = false;
             ambientSoundSO = soundSO as AmbientSoundSO;
 
             audioSource.clip = ambientSoundSO.clips[0];
@@ -42,7 +43,6 @@ namespace com.sharmas4.MentalHealthDisorder
         public override void Simulate()
         {
             Prepare();
-            audioSource.enabled = false;
             coroutine = StartCoroutine(MasterCoroutine());
         }
 

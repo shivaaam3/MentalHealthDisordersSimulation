@@ -20,6 +20,7 @@ namespace com.sharmas4.MentalHealthDisorder
             for (int i = 0; i < rendererGOs.Length; i++)
             {
                 rendererGOs[i] = transform.GetChild(i);
+                rendererGOs[i].gameObject.SetActive(false);
             }
             coroutines = new Coroutine[rendererGOs.Length];
         }
@@ -44,7 +45,6 @@ namespace com.sharmas4.MentalHealthDisorder
             Prepare();
             for (int i = 0; i < rendererGOs.Length; i++)
             {
-                rendererGOs[i].gameObject.SetActive(false);
                 SpriteRenderer mainSR = rendererGOs[i].Find("Main").GetComponent<SpriteRenderer>();
                 SpriteRenderer distortSR = rendererGOs[i].Find("Distort").GetComponent<SpriteRenderer>();
                 coroutines[i] = StartCoroutine(MasterCoroutine(rendererGOs[i], mainSR, distortSR));

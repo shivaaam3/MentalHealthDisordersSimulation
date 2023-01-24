@@ -5,9 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
-//using static System.Net.Mime.MediaTypeNames;
-//using System.Drawing;
-//using static System.Net.Mime.MediaTypeNames;
+
 
 public class Toggle : MonoBehaviour, IPointerDownHandler
 {
@@ -21,7 +19,7 @@ public class Toggle : MonoBehaviour, IPointerDownHandler
     [SerializeField] private float tweenTime;
     [SerializeField] GameObject[] options = new GameObject[2];
 
-    private ToggleSide currentSide = ToggleSide.Undefined;
+    private ToggleSide currentSide = ToggleSide.Left;
     private ToggleState currentState = ToggleState.Switched;
 
     public GameObject HighlightedOption { get; private set; }
@@ -29,22 +27,39 @@ public class Toggle : MonoBehaviour, IPointerDownHandler
     public Action<ToggleSide> OnValueChanged;
 
 
-    private float InitialX { get { return NonHighlightedOption.GetComponent<RectTransform>().anchoredPosition.x; } }
-    private float FinalX { get { return HighlightedOption.GetComponent<RectTransform>().anchoredPosition.x; } }
-    private TMP_Text HighlightedOptionText { get { return HighlightedOption.GetComponent<TMP_Text>(); } }
-    private TMP_Text NonHighlightedOptionText { get { return NonHighlightedOption.GetComponent<TMP_Text>(); } }
-    private RectTransform highlighterTransform { get { return highlighter.GetComponent<RectTransform>(); } }
-
-
-    public void OnEnable()
+    private void OnEnable()
     {
         //SwitchToggle(currentSide);
     }
 
-
-    public void SwitchToggle(float tweenTime = 0)
+    float GetInitialX()
     {
+        return NonHighlightedOption.GetComponent<RectTransform>().anchoredPosition.x;
+    }
 
+    float GetFinalX()
+    {
+        return HighlightedOption.GetComponent<RectTransform>().anchoredPosition.x;
+    }
+
+    TMP_Text GetHighlightedOptionText()
+    {
+        return HighlightedOption.GetComponent<TMP_Text>();
+    }
+
+    TMP_Text GetNonHighlightedOptionText()
+    {
+        return NonHighlightedOption.GetComponent<TMP_Text>();
+    }
+
+    RectTransform GetHighLighterTransform()
+    {
+        return highlighter.GetComponent<RectTransform>();
+    }
+
+
+    private void SwitchToggle(float tweenTime = 0)
+    {
         currentSide = 1 - currentSide;
         SwitchToggleTo(currentSide, tweenTime);
     }
@@ -52,6 +67,7 @@ public class Toggle : MonoBehaviour, IPointerDownHandler
 
     public void SwitchToggleTo(ToggleSide side, float tweenTime = 0)
     {
+        print(side);
         currentSide = side;
         HighlightedOption = options[(int)currentSide];
         NonHighlightedOption = options[1 - (int)currentSide];
@@ -62,9 +78,9 @@ public class Toggle : MonoBehaviour, IPointerDownHandler
             StartCoroutine(TweenToggle(tweenTime));
         else
         {
-            MoveHighlighter(new Vector2(FinalX, highlighterTransform.anchoredPosition.y));
-            ChangeTextColor(HighlightedOptionText, highlightedOptionColor);
-            ChangeTextColor(NonHighlightedOptionText, defaultOptionColor);
+            MoveHighlighter(new Vector2(GetFinalX(), GetHighLighterTransform().anchoredPosition.y));
+            ChangeTextColor(GetHighlightedOptionText(), highlightedOptionColor);
+            ChangeTextColor(GetNonHighlightedOptionText(), defaultOptionColor);
         }
     }
 
@@ -86,20 +102,20 @@ public class Toggle : MonoBehaviour, IPointerDownHandler
     private IEnumerator TweenToggle(float tweenTime)
     {
         currentState = ToggleState.Switching;
-        float currentX = InitialX;
-        StartCoroutine(TweenTextColor(HighlightedOptionText, highlightedOptionColor, tweenTime));
-        StartCoroutine(TweenTextColor(NonHighlightedOptionText, defaultOptionColor, tweenTime));
+        float currentX = GetInitialX();
+        StartCoroutine(TweenTextColor(GetHighlightedOptionText(), highlightedOptionColor, tweenTime));
+        StartCoroutine(TweenTextColor(GetNonHighlightedOptionText(), defaultOptionColor, tweenTime));
 
         float t = 0;
         while (t <= tweenTime)
         {
-            currentX = Mathf.Lerp(currentX, FinalX, t);
-            MoveHighlighter(new Vector2(currentX, highlighterTransform.anchoredPosition.y));
+            currentX = Mathf.Lerp(currentX, GetFinalX(), t);
+            MoveHighlighter(new Vector2(currentX, GetHighLighterTransform().anchoredPosition.y));
             t += Time.deltaTime;
             yield return null;
         }
 
-        MoveHighlighter(new Vector2(FinalX, highlighterTransform.anchoredPosition.y));
+        MoveHighlighter(new Vector2(GetFinalX(), GetHighLighterTransform().anchoredPosition.y));
         currentState = ToggleState.Switched;
     }
 
@@ -112,7 +128,7 @@ public class Toggle : MonoBehaviour, IPointerDownHandler
 
     private void MoveHighlighter(Vector2 finalPos)
     {
-        highlighterTransform.anchoredPosition = finalPos;
+        GetHighLighterTransform().anchoredPosition = finalPos;
     }
 
     private void ChangeTextColor(TMP_Text text, Color color)
@@ -127,8 +143,7 @@ public class Toggle : MonoBehaviour, IPointerDownHandler
 public enum ToggleSide
 {
     Left,
-    Right,
-    Undefined
+    Right
 }
 
 public enum ToggleState

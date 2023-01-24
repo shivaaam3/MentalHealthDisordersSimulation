@@ -16,6 +16,10 @@ namespace com.sharmas4.MentalHealthDisorder
         {
             base.Awake();
             audioSources = GetComponentsInChildren<AudioSource>();
+            for (int i = 0; i < audioSources.Length; i++)
+            {
+                audioSources[i].enabled = false;
+            }
             coroutines = new Coroutine[audioSources.Length];
         }
 
@@ -38,10 +42,8 @@ namespace com.sharmas4.MentalHealthDisorder
         {
             Prepare();
             for (int i = 0; i < audioSources.Length; i++)
-            {
-                audioSources[i].enabled = false;
                 coroutines[i] = StartCoroutine(MasterCoroutine(audioSources[i]));
-            }
+
         }
 
         private IEnumerator MasterCoroutine(AudioSource audioSource)

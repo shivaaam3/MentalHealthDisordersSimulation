@@ -21,14 +21,13 @@ namespace com.sharmas4.MentalHealthDisorder
             base.Awake();
             particlesParentT = transform.GetChild(0);
             particles = GetComponentsInChildren<ParticleSystem>();
-
+            EnableDisableParticles(false);
         }
 
         protected override void Prepare()
         {
             base.Prepare();
             noOfCoroutinesRunning = 1;
-            EnableDisableParticles(false);
             particlesParentT.parent = CharacterData.CharacterCamera.transform;
             particlesParentT.localPosition = particlesSO.offset;
             particlesParentT.localRotation = Quaternion.identity;
