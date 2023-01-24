@@ -30,12 +30,14 @@ public class ButtonSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         isSliderInit = true;
         slider.minValue = minValue;
         slider.maxValue = maxValue;
+        sliderValueText.text = slider.value.ToString();
     }
 
     void OnEnable()
     {
         plus.onClick.AddListener(OnPlusClicked);
         minus.onClick.AddListener(OnMinusClicked);
+        InitSlider();
     }
 
     void OnDisable()

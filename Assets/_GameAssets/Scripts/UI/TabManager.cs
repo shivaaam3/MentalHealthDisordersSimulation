@@ -10,23 +10,20 @@ namespace com.sharmas4.MentalHealthDisorder
 {
     public class TabManager : MonoBehaviour
     {
-        [SerializeField] GameObject[] tabsGOs;
-        [SerializeField] Button[] tabButtons;
+        [SerializeField] private GameObject[] tabsGOs;
+        [SerializeField] private Button[] tabButtons;
         [SerializeField] private Color highlightedTabColor;
         [SerializeField] private Color defaultTabColor;
 
 
         private UnityAction[] actions;
-        private GameObject currentTab;
-        private Button currentButton;
+        private int currentIndex = 1;
 
         // Start is called before the first frame update
         private void Start()
         {
             OnTabButtonPressed(0);
         }
-
-
 
         void OnEnable()
         {
@@ -51,28 +48,16 @@ namespace com.sharmas4.MentalHealthDisorder
 
         void OnTabButtonPressed(int index)
         {
-            if (currentTab != null)
-            {
-                currentTab.SetActive(false);
-            }
+            if (currentIndex == index)
+                return;
 
-            if (currentButton != null)
-                currentButton.image.color = defaultTabColor;
+            tabButtons[currentIndex].image.color = defaultTabColor;
+            tabsGOs[currentIndex].SetActive(false);
 
-            currentButton = tabButtons[index];
-            currentTab = tabsGOs[index];
-            currentButton.image.color = highlightedTabColor;
-            currentTab.SetActive(true);
+            currentIndex = index;
+
+            tabButtons[currentIndex].image.color = highlightedTabColor;
+            tabsGOs[currentIndex].SetActive(true);
         }
     }
-}
-
-
-enum tabs
-{
-    Presets = 0,
-    Controls,
-    Symptoms,
-    PostProcessing,
-    Other
 }
